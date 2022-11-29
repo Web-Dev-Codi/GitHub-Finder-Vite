@@ -6,12 +6,12 @@ import GithubContext from '../../context/github/GithubContext';
 
 
 function UserResults() {
-  const { users, loading, fetchUsers } = useContext(GithubContext)
+  const { users, loading } = useContext(GithubContext)
 
-  useEffect(() => {
-    // const response run async funtion here
-    fetchUsers();
-  }, [])
+  // useEffect(() => {
+  //   // const response run async funtion here
+  //   fetchUsers();
+  // }, [])
 
   if (!loading) {
     return (
