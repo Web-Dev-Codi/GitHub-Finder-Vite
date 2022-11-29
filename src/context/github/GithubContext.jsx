@@ -19,37 +19,42 @@ export const GithubProvider = ({ children }) => {
   const [state, dispatch] = useReducer(GithubReducer, initialState);
 
 
-  // Gets initial users (testing purposes).
-  const fetchUsers = async () => {
+  // Gets search results
+  const searchUsers = async (text) => {
     setLoading()
 
-    const response = await fetch(`https://api.github.com/users`, {
+    const params = new URLSearchParams({
+      q: text
+    })
+
+    const response = await fetch(`https://api.github.com/search/users?${params}`, {
       headers: {
         Authorization: `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`
       },
     })
-    const data = await response.json();
-
-    console.log(data);
-    //used for useState hook dont need because we are using useReducer below
-    // setUsers(data)
-    // setLoading(false)
+    const { items } = await response.json();
 
     dispatch({
       type: 'GET_USERS',
-      payload: data,
+      payload: items,
     })
   }
-
   //set loading
   const setLoading = () => dispatch({
     type: 'SET_LOADING',
   })
 
+  //clear users from state
+
+  const clearUsers = () => dispatch({
+    type: 'CLEAR_USERS',
+  })
+
   return < GithubContext.Provider value={{
     users: state.users,
     loading: state.loading,
-    fetchUsers
+    searchUsers,
+    clearUsers,
   }
   }>
     {children}
