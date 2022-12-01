@@ -3,16 +3,12 @@ import GithubReducer from './GithubReducer'
 
 const GithubContext = createContext();
 
-// const GITHUB_URL = `https://api.github.com/`;
-// const GITHUB_TOKEN = `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`;
-
-
 
 export const GithubProvider = ({ children }) => {
-  // const [users, setUsers] = useState([]);
-  // const [loading, setLoading] = useState(true);
+
   const initialState = {
     users: [],
+    user: {},
     loading: false,
   }
 
@@ -39,13 +35,35 @@ export const GithubProvider = ({ children }) => {
       payload: items,
     })
   }
+  // Get single user
+  const getUser = async (login) => {
+    setLoading()
+
+    const response = await fetch(`https://api.github.com/users/${login}`, {
+      headers: {
+        Authorization: `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`
+      },
+    })
+
+    if (response.status === 404) {
+      window.location = '/notfound'
+    } else {
+
+      const data = await response.json();
+
+      dispatch({
+        type: 'GET_USER',
+        payload: data,
+      })
+    }
+  }
   //set loading
   const setLoading = () => dispatch({
     type: 'SET_LOADING',
   })
 
-  //clear users from state
 
+  //clear users from state
   const clearUsers = () => dispatch({
     type: 'CLEAR_USERS',
   })
@@ -53,8 +71,10 @@ export const GithubProvider = ({ children }) => {
   return < GithubContext.Provider value={{
     users: state.users,
     loading: state.loading,
+    user: state.user,
     searchUsers,
     clearUsers,
+    getUser
   }
   }>
     {children}
